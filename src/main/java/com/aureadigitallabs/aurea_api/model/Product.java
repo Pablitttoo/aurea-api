@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "products")
 @Data // Genera Getters, Setters, ToString, etc.
-@NoArgsConstructor // Constructor vacío (Obligatorio para JPA)
+@NoArgsConstructor // Constructor vacío
 @AllArgsConstructor // Constructor con todos los campos
 public class Product {
 
@@ -19,7 +19,7 @@ public class Product {
     private String name;
     private Double price;
 
-    @Column(length = 1000) // Permitimos descripciones largas
+    @Column(length = 1000)
     private String description;
 
     @Enumerated(EnumType.STRING) // Guarda "SKATE" como texto en la BD

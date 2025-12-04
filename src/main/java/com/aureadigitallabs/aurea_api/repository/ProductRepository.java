@@ -9,7 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // Método personalizado para buscar por categoría
-    // Spring crea el SQL automáticamente al leer el nombre del método
     List<Product> findByCategory(Category category);
 }
