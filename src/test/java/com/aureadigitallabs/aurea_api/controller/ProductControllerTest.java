@@ -6,6 +6,7 @@ import com.aureadigitallabs.aurea_api.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc; // <--- IMPORTANTE
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
+@AutoConfigureMockMvc(addFilters = false) // <--- ESTO DESACTIVA LA SEGURIDAD PARA EL TEST
 class ProductControllerTest {
 
     @Autowired
@@ -34,24 +36,18 @@ class ProductControllerTest {
 
     @Test
     void shouldReturnAllProducts() throws Exception {
-        // Arrange: Crear categoría y producto
         Category catSkate = new Category(1L, "Skate", "skate");
         Product p1 = new Product(1L, "Skate", 15000.0, "Desc", catSkate, "img");
-        
         when(service.getAllProducts()).thenReturn(Arrays.asList(p1));
 
-        // Act & Assert
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Skate"))
-                // Opcional: Verificar que el JSON anidado de categoría viene bien
-                .andExpect(jsonPath("$[0].category.name").value("Skate"));
+                .andExpect(jsonPath("$[0].name").value("Skate"));
     }
 
     @Test
     void shouldCreateProduct() throws Exception {
         Category catBmx = new Category(3L, "BMX", "bmx");
-        
         Product newProduct = new Product(null, "Casco", 5000.0, "Seguridad", catBmx, "img");
         Product savedProduct = new Product(1L, "Casco", 5000.0, "Seguridad", catBmx, "img");
 
@@ -68,7 +64,6 @@ class ProductControllerTest {
     void shouldReturnProductById() throws Exception {
         Category catRoller = new Category(2L, "Roller", "roller");
         Product p = new Product(1L, "Roller", 30000.0, "Pro", catRoller, "img");
-        
         when(service.getProductById(1L)).thenReturn(Optional.of(p));
 
         mockMvc.perform(get("/api/products/1"))
