@@ -14,15 +14,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth            
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()                              
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/products/**").permitAll()   // Permitimos ver productos sin login
-                .requestMatchers("/api/categories/**").permitAll() // Permitimos ver categorías sin login                               
-                .anyRequest().authenticated()
-            );
-        
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+                        // --- CORRECCIÓN AQUÍ ---
+                        // Permitimos la ruta EXACTA de login y también registro de usuarios
+                        .requestMatchers("/api/login").permitAll() // Login (AuthController)
+                        .requestMatchers("/api/users/register").permitAll() // Registro (UserController)
+                        .requestMatchers("/api/users/login").permitAll() // Login alternativo (UserController, por si
+                                                                         // acaso)
+
+                        .requestMatchers("/api/products/**").permitAll()
+                        .requestMatchers("/api/categories/**").permitAll()
+                        .anyRequest().authenticated());
+
         return http.build();
     }
 }
