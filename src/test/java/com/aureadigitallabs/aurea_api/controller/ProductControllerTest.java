@@ -34,18 +34,26 @@ class ProductControllerTest {
 
     @Test
     void shouldReturnAllProducts() throws Exception {
-        Product p1 = new Product(1L, "Skate", 15000.0, "Desc", Category.SKATE, "img");
+        // Arrange: Crear categoría y producto
+        Category catSkate = new Category(1L, "Skate", "skate");
+        Product p1 = new Product(1L, "Skate", 15000.0, "Desc", catSkate, "img");
+        
         when(service.getAllProducts()).thenReturn(Arrays.asList(p1));
 
+        // Act & Assert
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Skate"));
+                .andExpect(jsonPath("$[0].name").value("Skate"))
+                // Opcional: Verificar que el JSON anidado de categoría viene bien
+                .andExpect(jsonPath("$[0].category.name").value("Skate"));
     }
 
     @Test
     void shouldCreateProduct() throws Exception {
-        Product newProduct = new Product(null, "Casco", 5000.0, "Seguridad", Category.BMX, "img");
-        Product savedProduct = new Product(1L, "Casco", 5000.0, "Seguridad", Category.BMX, "img");
+        Category catBmx = new Category(3L, "BMX", "bmx");
+        
+        Product newProduct = new Product(null, "Casco", 5000.0, "Seguridad", catBmx, "img");
+        Product savedProduct = new Product(1L, "Casco", 5000.0, "Seguridad", catBmx, "img");
 
         when(service.saveProduct(any(Product.class))).thenReturn(savedProduct);
 
@@ -56,10 +64,11 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.id").value(1));
     }
 
-
     @Test
     void shouldReturnProductById() throws Exception {
-        Product p = new Product(1L, "Roller", 30000.0, "Pro", Category.ROLLER, "img");
+        Category catRoller = new Category(2L, "Roller", "roller");
+        Product p = new Product(1L, "Roller", 30000.0, "Pro", catRoller, "img");
+        
         when(service.getProductById(1L)).thenReturn(Optional.of(p));
 
         mockMvc.perform(get("/api/products/1"))

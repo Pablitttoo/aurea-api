@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "products")
-@Data // Genera Getters, Setters, ToString, etc.
-@NoArgsConstructor // Constructor vacío
-@AllArgsConstructor // Constructor con todos los campos
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
 
     @Id
@@ -22,9 +22,9 @@ public class Product {
     @Column(length = 1000)
     private String description;
 
-    @Enumerated(EnumType.STRING) // Guarda "SKATE" como texto en la BD
+    @ManyToOne 
+    @JoinColumn(name = "category_id") // Crea una columna category_id en la tabla products
     private Category category;
 
-    // Guardamos el nombre del archivo de imagen (ej: "skatepro")
     private String imageName;
 }
