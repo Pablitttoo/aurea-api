@@ -10,7 +10,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -18,15 +17,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        // --- CORRECCIÓN AQUÍ ---
-                        // Permitimos la ruta EXACTA de login y también registro de usuarios
-                        .requestMatchers("/api/login").permitAll() // Login (AuthController)
-                        .requestMatchers("/api/users/register").permitAll() // Registro (UserController)
-                        .requestMatchers("/api/users/login").permitAll() // Login alternativo (UserController, por si
-                                                                         // acaso)
+                        // Login y Registro
+                        .requestMatchers("/api/login").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
 
+                        // Productos y Categorías
                         .requestMatchers("/api/products/**").permitAll()
                         .requestMatchers("/api/categories/**").permitAll()
+
+                        // --- AGREGA ESTO AQUÍ ---
+                        // Permitimos crear y ver pedidos sin validar el token "falso"
+                        .requestMatchers("/api/orders/**").permitAll()
+
                         .anyRequest().authenticated());
 
         return http.build();
