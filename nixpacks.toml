@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["jdk21_headless"]
+
+[phases.build]
+cmds = ["./gradlew build -x test"]
+
+[phases.start]
+cmds = ["./gradlew bootRun"]
