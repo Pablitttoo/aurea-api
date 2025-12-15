@@ -40,4 +40,19 @@ public class UserService {
         }
         return null;
     }
+
+    public User updateUser(Long id, User userDetails) {
+    return repository.findById(id).map(user -> {
+        user.setUsername(userDetails.getUsername());
+        // Solo actualizamos el rol si viene en la petición
+        if (userDetails.getRole() != null) {
+            user.setRole(userDetails.getRole());
+        }
+        // Opcional: Actualizar password solo si no está vacío
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            user.setPassword(userDetails.getPassword()); // Recuerda encriptarla si usas BCrypt
+        }
+        return repository.save(user);
+    }).orElse(null);
+}
 }
